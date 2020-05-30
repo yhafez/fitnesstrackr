@@ -7,7 +7,7 @@
 
 
 //Import client from database and connect to client
-const { client } = require (' ./db');
+const { client } = require ('./db');
 client.connect();
 
 //Set port to that specified in the environment (for Heroku), else to port 3000

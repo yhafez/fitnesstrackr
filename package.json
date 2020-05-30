@@ -6,7 +6,8 @@
     "seed:dev": "nodemon ./db/seed.js",
     "seed:": "node ./db/seed.js",
     "start": "node index.js",
-    "start:dev": "nodemon index.js"
+    "start:dev": "nodemon index.js",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +23,7 @@
     "pg": "^8.2.1"
   },
   "devDependencies": {
+    "jest": "^26.0.1",
     "nodedev": "0.0.1",
     "nodemon": "^2.0.4"
   },
