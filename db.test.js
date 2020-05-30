@@ -1,14 +1,18 @@
-const { getAllUsers, createUser, getUser, updateUser } = require('./db');
+const { client, getAllUsers, createUser, getUser, updateUser } = require('./db');
 const axios = require('axios');
-
+client.connect();
 
 //Attempt 1 - works, but if I make it async, doesn't work. Successfully determines that I'm receiving an object, which is really just a promise object.
 
-// describe('getAllUsers()', () => {
-    // test('Returns array of user objects', () => {
-    //     expect(typeof getAllUsers()).toBe('object');
-    // })
-// });
+describe('getAllUsers()', () => {
+    test('Returns array of user objects', async () => {
+        const allUsers = await getAllUsers();
+        console.log('>>>>>>>>> allUsers', allUsers);
+        expect(typeof allUsers).toBe('object');
+        expect(Array.isArray(allUsers)).toBe(true);
+        expect(allUsers[0].firstname).toBeTruthy();
+    })
+});
 
 
 
