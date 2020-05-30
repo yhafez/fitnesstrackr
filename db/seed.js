@@ -214,7 +214,7 @@ async function createTables() {
             CREATE TABLE routines (
                 id SERIAL PRIMARY KEY,
                 "creatorId" INTEGER REFERENCES users(id) NOT NULL,
-                public BOOLEAN DEFAULT false,
+                "isPublic" BOOLEAN DEFAULT false,
                 name VARCHAR(255) NOT NULL,
                 description TEXT NOT NULL
             );

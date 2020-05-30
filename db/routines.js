@@ -16,14 +16,14 @@ const { client, getUserByUsername, getUserByEmail } = require('./users');
 //Add a new routine to the activities table
 async function createRoutine( fields = {} ) {
         
-    const { creatorId, public, name, description } = fields;
+    const { creatorId, isPublic, name, description } = fields;
 
     try{
-        if(public) {
+        if(isPublic) {
             
             const { rows: routine } = await client.query(`
-                INSERT INTO routines("creatorId", public, name, description)
-                VALUES (${creatorId}, ${public}, '${name}', '${description}')
+                INSERT INTO routines("creatorId", "isPublic", name, description)
+                VALUES (${creatorId}, ${isPublic}, '${name}', '${description}')
                 RETURNING *;
             `)
 
