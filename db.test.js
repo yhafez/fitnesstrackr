@@ -1,13 +1,92 @@
-const { getAllUsers, createUser, getUser, updateUser } = require('./db');
+// @ts-nocheck
+const {
+    createUser,
+    getUser,
+    getAllUsers,
+    updateUser,
+    getUserByEmail,
+    getUserById,
+    getUserByUsername,
+    createActivity,
+    getAllActivities,
+    updateActivity,
+    getActivitiesById,
+    getActivitiesByUser,
+    getActivitiesByEmail,
+    createRoutine,
+    updateRoutine,
+    getAllRoutines,
+    getPublicRoutines,
+    getAllRoutinesByUser,
+    getPublicRoutinesByUser,
+    getPublicRoutinesByActivity,
+    getAllRoutinesByActivity,
+    getRoutineById,
+    getAllRoutinesByEmail,
+    getPublicRoutinesByEmail,
+    addActivityToRoutine,
+    updateRoutineActivity,
+    destroyRoutineActivity,
+    getAllRoutineActivitiesById
+} = require('./db');
+
+const faker = require('faker');
+
+
 const axios = require('axios');
+
+
+describe('Validation tests', () => {
+    test('Expect equality to return true', () => {
+        expect(true).toBe(true);
+    });
+});
+
+
+describe('Create user test', () => {
+    
+    test('Expect successful POST request to /register to return a user object', async () => {
+        
+        const userObj = await fetch('https://localhost:3000/register', POST,
+        {
+            method: 'POST',
+            body: {
+                firstname: faker.name.firstName(),
+                lastname: faker.name.lastName(),
+                email: faker.internet.email(),
+                username: faker.internet.userName(),
+                password: faker.internet.password()
+            }
+        });
+
+        console.log(userObj);
+        
+        expect(userObj.keys).toBe(['firstname', 'lastname', 'email', 'username', 'password']);
+            
+        expect(typeof userObj.firstname).toBe('string'); //firstname
+        expect(typeof userObj.lastname).toBe('string'); //lastname
+        expect(typeof userObj.email).toBe('string'); //email
+        expect(typeof userObj.username).toBe('string'); //username
+        exect(typeof userObj.password).toBe('string'); //password
+    
+        
+    })
+})
 
 
 //Attempt 1 - works, but if I make it async, doesn't work. Successfully determines that I'm receiving an object, which is really just a promise object.
 
 // describe('getAllUsers()', () => {
-    // test('Returns array of user objects', () => {
-    //     expect(typeof getAllUsers()).toBe('object');
-    // })
+//     test('Returns array of user objects', async () => {
+//         // jest.setTimeout(20000);
+//         console.log(getAllUsers);
+//         const users = await getAllUsers();
+//         console.log(users);
+
+//         expect(true).toBe(true);
+//         // expect(typeof users).toBe('object');
+//         // expect(Array.isArray(users)).toBe(true);
+//     });
 // });
 
 
@@ -18,22 +97,52 @@ const axios = require('axios');
 // describe('getAllUsers()', () => {
 
 
-    // test('Returns array of user objects', async () => {
+//     test('Returns array of user objects', async () => {
 
 
-    //     const await expectedObj = {
-    //         id: expect.any(Number),
-    //         firstname: expect.any(String),
-    //         lasstname: expect.any(String),
-    //         email: expect.any(String),
-    //         username: expect.any(String),
-    //         active: expect.any(Boolean)
-    //     }
-    //     const expectedArr = [except.objectContaining(expectedObj)]
-    //     console.log(expectedObj);
+//         const expectedObj = {
+//             id: expect.any(Number),
+//             firstname: expect.any(String),
+//             lasstname: expect.any(String),
+//             email: expect.any(String),
+//             username: expect.any(String),
+//             active: expect.any(Boolean)
+//         }
+//         const expectedArr = [except.objectContaining(expectedObj)]
+//         console.log(expectedObj);
 
-    //     expect(getAllUsers()).toEqual(expect.arrayContaining(expectedArr));
-    // })
+//         expect(getAllUsers()).toEqual(expect.arrayContaining(expectedArr));
+//     })
+// });
+
+//         const expectedObj = {
+//             id: expect.any(Number),
+//             firstname: expect.any(String),
+//             lasstname: expect.any(String),
+//             email: expect.any(String),
+//             username: expect.any(String),
+//             active: expect.any(Boolean)
+//         }
+//         const expectedArr = [except.objectContaining(expectedObj)]
+//         console.log(expectedObj);
+
+//         expect(getAllUsers()).toEqual(expect.arrayContaining(expectedArr));
+//     })
+// });
+
+//         const expectedObj = {
+//             id: expect.any(Number),
+//             firstname: expect.any(String),
+//             lasstname: expect.any(String),
+//             email: expect.any(String),
+//             username: expect.any(String),
+//             active: expect.any(Boolean)
+//         }
+//         const expectedArr = [except.objectContaining(expectedObj)]
+//         console.log(expectedObj);
+
+//         expect(getAllUsers()).toEqual(expect.arrayContaining(expectedArr));
+//     })
 // });
 
 

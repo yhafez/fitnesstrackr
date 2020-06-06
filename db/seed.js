@@ -22,6 +22,7 @@ const {
     getActivitiesByEmail,
     createRoutine,
     updateRoutine,
+    destroyRoutine,
     getAllRoutines,
     getPublicRoutines,
     getAllRoutinesByUser,
@@ -34,6 +35,7 @@ const {
     addActivityToRoutine,
     updateRoutineActivity,
     destroyRoutineActivity,
+    getRoutineActivityById,
     getAllRoutineActivitiesById
 } = require('./index');
 
@@ -49,109 +51,117 @@ async function testDB() {
 
 
         //users table management functions
-        console.log('Calling getAllUsers');
-        const users = await getAllUsers();
-        console.log('getAllUsers result: ', users);
+        // console.log('Calling getAllUsers');
+        // const users = await getAllUsers();
+        // console.log('getAllUsers result: ', users);
         
-        console.log('Calling getUser');
-        const user = await getUser({ username: 'joe_the_bro', password: 'password123' });
-        console.log('getUser result: ', user);
+        // console.log('Calling getUser');
+        // const user = await getUser({ username: 'joe_the_bro', password: 'password123' });
+        // console.log('getUser result: ', user);
 
-        console.log('Calling getUserById');
-        const userById = await getUserById(3);
-        console.log('getUserById result: ', userById);
+        // console.log('Calling getUserById');
+        // const userById = await getUserById(3);
+        // console.log('getUserById result: ', userById);
 
-        console.log('Calling getUserByEmail');
-        const userByEmail = await getUserByEmail('eva_the_bot@example.com');
-        console.log('getUserByEmail result: ', userByEmail);
+        // console.log('Calling getUserByEmail');
+        // const userByEmail = await getUserByEmail('eva_the_bot@example.com');
+        // console.log('getUserByEmail result: ', userByEmail);
 
-        console.log('Calling getUserByUsername');
-        const userByUsername = await getUserByUsername('joe_the_bro');
-        console.log('getUserByUsernam result: ', userByUsername);
+        // console.log('Calling getUserByUsername');
+        // const userByUsername = await getUserByUsername('joe_the_bro');
+        // console.log('getUserByUsernam result: ', userByUsername);
 
-        console.log('Calling updateUser on user users[0]')
-        const updateUserResult = await updateUser(users[0].id, {
-            firstname: 'Newname',
-            lastname: 'Sogood'
-        });
-        console.log('updateUser result: ', updateUserResult);
-
-
-        //activities table management functions
-        console.log('Calling getAllActivities');
-        const actvities = await getAllActivities();
-        console.log('getAllActivities result: ', actvities);
-
-        console.log('Calling updateActivity');
-        const activity = await updateActivity(3, {"videoUrl": 'https://www.youtube.com/watch?v=FnRwNZ0M69Q'})
-        console.log('updateActivity result: ', activity);
-
-        console.log('Calling getActivitiesById');
-        const actvitiesById = await getActivitiesById(2);
-        console.log('getActivitiesById result: ', actvitiesById);
-
-        console.log('Calling getActivitiesByUser');
-        const actvitiesByUser = await getActivitiesByUser('eva_the_bot')
-        console.log('getActivitiesById result: ', actvitiesByUser);
-
-        console.log('Calling getActivitiesByEmail');
-        const actvitiesByEmail = await getActivitiesByEmail('duo_lingo@example.com')
-        console.log('getActivitiesById result: ', actvitiesByEmail);
+        // console.log('Calling updateUser on user users[0]')
+        // const updateUserResult = await updateUser(users[0].id, {
+        //     firstname: 'Newname',
+        //     lastname: 'Sogood'
+        // });
+        // console.log('updateUser result: ', updateUserResult);
 
 
-        //routines table management functions
-        console.log('Calling getAllRoutines');
-        const routines = await getAllRoutines();
-        console.log('getAllRoutines result: ', routines);
+        // //activities table management functions
+        // console.log('Calling getAllActivities');
+        // const actvities = await getAllActivities();
+        // console.log('getAllActivities result: ', actvities);
 
-        console.log('Calling getPublicRoutines');
-        const publicRoutines = await getPublicRoutines();
-        console.log('getPublicRoutines result: ', publicRoutines);
+        // console.log('Calling updateActivity');
+        // const activity = await updateActivity(3, {"videoUrl": 'https://www.youtube.com/watch?v=FnRwNZ0M69Q'})
+        // console.log('updateActivity result: ', activity);
 
-        console.log('Calling getAllRoutinesByUser');
-        const allRoutinesByUser = await getAllRoutinesByUser('eva_the_bot');
-        console.log('getAllRoutinesByUser result: ', allRoutinesByUser);
+        // console.log('Calling getActivitiesById');
+        // const actvitiesById = await getActivitiesById(2);
+        // console.log('getActivitiesById result: ', actvitiesById);
 
-        console.log('Calling getPublicRoutinesByUser');
-        const publicRoutinesByUser = await getPublicRoutinesByUser('joe_the_bro');
-        console.log('getPublicRoutinesByUser result: ', publicRoutinesByUser);
+        // console.log('Calling getActivitiesByUser');
+        // const actvitiesByUser = await getActivitiesByUser('eva_the_bot')
+        // console.log('getActivitiesById result: ', actvitiesByUser);
 
-        console.log('Calling getAllRoutinesByActivity');
-        const allRoutinesByActivity = await getAllRoutinesByActivity(1);
-        console.log('getAllRoutinesByActivity result: ', allRoutinesByActivity);
+        // console.log('Calling getActivitiesByEmail');
+        // const actvitiesByEmail = await getActivitiesByEmail('duo_lingo@example.com')
+        // console.log('getActivitiesById result: ', actvitiesByEmail);
 
-        console.log('Calling getPublicRoutinesByActivity');
-        const publicRoutinesByActivity = await getPublicRoutinesByActivity(1);
-        console.log('getPublicRoutinesByActivity result: ', publicRoutinesByActivity);
 
-        console.log('Calling getRoutineById');
-        const routineById = await getRoutineById(3);
-        console.log('getRoutineById result: ', routineById);
+        // //routines table management functions
+        // console.log('Calling getAllRoutines');
+        // const routines = await getAllRoutines();
+        // console.log('getAllRoutines result: ', routines);
 
-        console.log('Calling getAllRoutinesByEmail');
-        const allRoutinesByEmail = await getAllRoutinesByEmail('duo_lingo@example.com');
-        console.log('getAllRoutinesByEmail result: ', allRoutinesByEmail);
+        // console.log('Calling getPublicRoutines');
+        // const publicRoutines = await getPublicRoutines();
+        // console.log('getPublicRoutines result: ', publicRoutines);
+
+        // console.log('Calling getAllRoutinesByUser');
+        // const allRoutinesByUser = await getAllRoutinesByUser('eva_the_bot');
+        // console.log('getAllRoutinesByUser result: ', allRoutinesByUser);
+
+        // console.log('Calling getPublicRoutinesByUser');
+        // const publicRoutinesByUser = await getPublicRoutinesByUser('joe_the_bro');
+        // console.log('getPublicRoutinesByUser result: ', publicRoutinesByUser);
+
+        // console.log('Calling getAllRoutinesByActivity');
+        // const allRoutinesByActivity = await getAllRoutinesByActivity(1);
+        // console.log('getAllRoutinesByActivity result: ', allRoutinesByActivity);
+
+        // console.log('Calling getPublicRoutinesByActivity');
+        // const publicRoutinesByActivity = await getPublicRoutinesByActivity(1);
+        // console.log('getPublicRoutinesByActivity result: ', publicRoutinesByActivity);
+
+        // console.log('Calling getRoutineById');
+        // const routineById = await getRoutineById(3);
+        // console.log('getRoutineById result: ', routineById);
+
+        // console.log('Calling getAllRoutinesByEmail');
+        // const allRoutinesByEmail = await getAllRoutinesByEmail('duo_lingo@example.com');
+        // console.log('getAllRoutinesByEmail result: ', allRoutinesByEmail);
         
-        console.log('Calling getPublicRoutinesByEmail');
-        const publicRoutinesByEmail = await getPublicRoutinesByEmail('joe_johnson@example.com');
-        console.log('getPublicRoutinesByEmail result: ', publicRoutinesByEmail);
+        // console.log('Calling getPublicRoutinesByEmail');
+        // const publicRoutinesByEmail = await getPublicRoutinesByEmail('joe_johnson@example.com');
+        // console.log('getPublicRoutinesByEmail result: ', publicRoutinesByEmail);
 
-        console.log('Calling updateRoutine');
-        const updatedRoutine = await updateRoutine(2, { public: true, name: 'Bboy Fundamentals' });
-        console.log('updatedRoutine result: ', updatedRoutine);
+        // console.log('Calling updateRoutine');
+        // const updatedRoutine = await updateRoutine(2, { public: true, name: 'Bboy Fundamentals' });
+        // console.log('updatedRoutine result: ', updatedRoutine);
 
-        //routine_activities table management functions
-        console.log('Calling getAllRoutineActivitiesById')
-        const routineActivities = await getAllRoutineActivitiesById(2);
-        console.log('getAllRouineActivitiesById result: ', routineActivities);
+        // console.log('Calling destroyRoutine');
+        // const deletedRoutine = await destroyRoutine(2);
+        // console.log('destroyRoutine result: ', deletedRoutine);
 
-        console.log('Calling updateRoutineActivity');
-        const updatedRoutineActivity = await updateRoutineActivity(2, {duration: 20, count: 3});
-        console.log('updateRoutineActivityResult: ', updatedRoutineActivity);
+        // //routine_activities table management functions
+        // console.log('Calling getAllRoutineActivitiesById')
+        // const routineActivities = await getAllRoutineActivitiesById(2);
+        // console.log('getAllRouineActivitiesById result: ', routineActivities);
 
-        console.log('Calling destroyRoutineActivity');
-        const destroyedActivity = await destroyRoutineActivity(2);
-        console.log('destroyRoutineActivity result: ', destroyedActivity);
+        // console.log('Calling updateRoutineActivity');
+        // const updatedRoutineActivity = await updateRoutineActivity(2, {duration: 20, count: 3});
+        // console.log('updateRoutineActivityResult: ', updatedRoutineActivity);
+
+        // console.log('Calling destroyRoutineActivity');
+        // const destroyedActivity = await destroyRoutineActivity(2);
+        // console.log('destroyRoutineActivity result: ', destroyedActivity);
+
+        // console.log('Calling getRoutineActivityById');
+        // const routineActivity = await getRoutineActivityById(1);
+        // console.log('getRoutineActivityById result: ', routineActivity);
 
         console.log('Finished testing database functions!');
     }
@@ -214,7 +224,7 @@ async function createTables() {
             CREATE TABLE routines (
                 id SERIAL PRIMARY KEY,
                 "creatorId" INTEGER REFERENCES users(id) NOT NULL,
-                public BOOLEAN DEFAULT false,
+                "isPublic" BOOLEAN DEFAULT false,
                 name VARCHAR(255) NOT NULL,
                 description TEXT NOT NULL
             );

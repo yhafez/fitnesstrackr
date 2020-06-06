@@ -93,6 +93,27 @@ async function destroyRoutineActivity(id) {
 /*------------------------------------------------------------------------ Functions - Stretch Goals -----------------------------------------------------------------------*/
 
 
+//Confirms that a routine activity exists in the specified routine
+async function getRoutineActivityById(id){
+
+    try{
+        
+        const {rows: routineActivityObj } = await client.query(`
+        SELECT *
+        FROM routine_activities
+        WHERE id=${id};
+        `)
+
+        return routineActivityObj;
+
+    }
+    catch(err){
+        console.error('Error getting routineActivity by id. Error: ', err);
+        throw err;
+    }
+}
+
+
 //Return an array of routines from the routine with specified routineId
 async function getAllRoutineActivitiesById(routineId){
      
@@ -126,5 +147,6 @@ module.exports = {
     addActivityToRoutine,
     updateRoutineActivity,
     destroyRoutineActivity,
+    getRoutineActivityById,
     getAllRoutineActivitiesById
 }

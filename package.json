@@ -7,13 +7,15 @@
     "seed:": "node ./db/seed.js",
     "start": "node index.js",
     "start:dev": "nodemon index.js",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watchAll"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.19.2",
+    "bcrypt": "^4.0.1",
     "body-parser": "^1.19.0",
     "chalk": "^4.0.0",
     "dotenv": "^8.2.0",
@@ -23,6 +25,7 @@
     "pg": "^8.2.1"
   },
   "devDependencies": {
+    "faker": "^4.1.0",
     "jest": "^26.0.1",
     "nodedev": "0.0.1",
     "nodemon": "^2.0.4"

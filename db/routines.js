@@ -13,17 +13,17 @@ const { client, getUserByUsername, getUserByEmail } = require('./users');
 /*------------------------------------------------------------------------------- Functions -------------------------------------------------------------------------------*/
 
 
-//Add a new routine to the activities table
+//Add a new routine to the routines table
 async function createRoutine( fields = {} ) {
         
-    const { creatorId, public, name, description } = fields;
+    const { creatorId, isPublic, name, description } = fields;
 
     try{
-        if(public) {
+        if(isPublic) {
             
             const { rows: routine } = await client.query(`
-                INSERT INTO routines("creatorId", public, name, description)
-                VALUES (${creatorId}, ${public}, '${name}', '${description}')
+                INSERT INTO routines("creatorId", "isPublic", name, description)
+                VALUES (${creatorId}, ${isPublic}, '${name}', '${description}')
                 RETURNING *;
             `)
 
@@ -47,7 +47,7 @@ async function createRoutine( fields = {} ) {
 }
 
 
-//Modify stored information about a routine in the activities table; can be used to de-activate/delete and re-activate/un-delete an routine
+//Modify stored information about a routine in the routines table
 async function updateRoutine( id, fields = {} ) {
 
     try{
@@ -77,6 +77,30 @@ async function updateRoutine( id, fields = {} ) {
 
 }
 
+
+//Delete a routine from the routines table
+async function destroyRoutine(id) {
+
+    try{
+        
+        const { rows: routine_activities} = await client.query(`
+            DELETE FROM routine_activities
+            WHERE "routineId"=${id};
+        `);
+        
+        const { rows: routine } = await client.query(`
+        DELETE FROM routines
+        WHERE id=${id}
+        RETURNING *;
+        `);
+
+        return routine;
+    }
+    catch(err) {
+        console.error('Error destroying routine. Error: ', err);
+        throw err;
+    }
+}
 
 //Get all routine objects
 async function getAllRoutines() {
@@ -314,6 +338,7 @@ async function getAllRoutinesByActivity(activityId) {
 module.exports = {
     createRoutine,
     updateRoutine,
+    destroyRoutine,
     getAllRoutines,
     getPublicRoutines,
     getAllRoutinesByUser,

@@ -25,7 +25,7 @@ async function createUser({
     try {
 
         //Throw missing fields error and return early if a field is missing
-        if(!firstname || !lastname || !email || !username || ![password]){
+        if(!firstname || !lastname || !email || !username || !password){
             
             throw new Error('One or more user field is missing');
             return;
@@ -51,24 +51,22 @@ async function createUser({
 }
 
 
-//Get user object; verifies password against the hashed password
-async function getUser( { username, password } ) {
+//Get user object (using hashed password)
+async function getUser( { username, hashedPassword } ) {
     
-    try{
+    try {
         
         const { rows: userObj } = await client.query(`
             SELECT *
             FROM users
             WHERE username=$1
             AND password=$2;
-        `, [username, password]);
+        `, [username, hashedPassword]);
 
         userObj.password='Hidden 😛';
 
         return userObj;
-        
-        //TODO
-        //Return token?
+    
     }
     catch(err) {
         console.error('Error getting user. Error: ', err);
@@ -80,6 +78,8 @@ async function getUser( { username, password } ) {
 
 
 /*------------------------------------------------------------------------ Functions - Stretch Goals -----------------------------------------------------------------------*/
+
+
 //Return all users currently stored in the user table in the database
 async function getAllUsers() {
 
@@ -89,9 +89,9 @@ async function getAllUsers() {
             SELECT *
             FROM users;
         `); 
-
+    
         usersArr.forEach((obj) => obj.password='Hidden 😛');
-
+    
         return usersArr;
 
     }
@@ -103,6 +103,7 @@ async function getAllUsers() {
     }
     
 }
+
 
 
 //Modify stored information about a user in the user table; can be used to de-activate/delete and re-activate/un-delete users
@@ -122,7 +123,7 @@ async function updateUser(id, fields = {}) {
     try {
         const { rows: [userObj] } = await client.query(`
             UPDATE users
-            set ${ setString }
+            SET ${ setString }
             WHERE id=${ id }
             RETURNING *;
         `, Object.values(fields));

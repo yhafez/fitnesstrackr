@@ -15,68 +15,86 @@ const apiRouter = express.Router();
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = process.env;
 
+//Import getUserById from ../db/users.js (through index.js)
+const { getUserById } = require('../db');
+
 
 /*------------------------------------------------------------------------------- Middleware -------------------------------------------------------------------------------*/
 
 
-//Set 'req.user' if authorized
-// apiRouter.use(async (req, res, next) => {
-//     const prefix = 'Bearer ';
-//     const auth = req.header('Authorization');
-
-//     if (!auth) {
-//         next();
-//     }
-//     else if (auth.startsWith(prefix)) {
-//         const token = auth.slice(prefix.length);
-        
-//         try {
-//             const { id } = jwt.verify(token, JWT_SECRET);
+//Notify user if server is up and healthy
+apiRouter.get('/health', (req, res, next) =>{
     
-//             if(id) {
-//                 req.user = await getUserById(id);
-//                 next();
-//             }
-//         }
-//         catch ({ name, message }) {
+    res.send({
+        message: "Server is healthy"
+    })
 
-//             next({ name, message });
+}); 
 
-//         }
-//     }
-//     else {
-//         next({
-//             name: 'AuthorizationHeaderError',
-//             message: `Authorization token must start with ${prefix}`
-//         });
-//     }
-// });
+//Set 'req.user' if authorized
+apiRouter.use(async (req, res, next) => {
+    const prefix = 'Bearer ';
+    const auth = req.header('Authorization');
 
+    //If not authorization, user is not logged in, so don't set req.user
+    if(!auth){
+        next();
+    }
 
-//Log that user is set in server terminal if logged in
-// apiRouter.use((req, res, next) => {
-//     if(req.user) {
-//         console.log('User is set: ', req.user);
-//     }
-//     next();
-// });
+    else if (auth.startsWith(prefix)) {
+        //Remove prefix and any extra blank spaces for verification step
+        const token = auth.slice(prefix.length);
+
+        try{
+            //Verify token using hidden private key
+            const { id } = jwt.verify(token, JWT_SECRET);
+
+            //If able to verify token with JWT, set req.user and log in server terminal; else notify user
+            if(id) {
+                req.user = await getUserById(id);
+                console.log('User is set: ', req.user);
+                next();
+            }
+            else {
+                next({
+                    name: 'InvalidToken',
+                    message: 'The token sent in with the authorization failed to verify. Please try again.'
+                })
+            }
+        }
+        catch(err) {
+            console.error('Error setting req.user. Error: ', err);
+            const { name, message } = err;
+            next({ name, message })
+        }
+    }
+    //If header is incorrectly formatted, notify user
+    else {
+        next({
+            name: 'AuthorizationHeaderError',
+            message: `Authorization token must start with ${prefix}`
+        });
+    }
+});
+
 
 
 /*--------------------------------------------------------------------------------- Routers ---------------------------------------------------------------------------------*/
 
+
 //Route requests to /users, /activities, /routines, and 
-// const usersRouter = require('./users');
-// apiRouter.use('/users', usersRouter);
+const usersRouter = require('./users');
+apiRouter.use('/users', usersRouter);
 
-// const activitiesRouter = require('./activities');
-// apiRouter.use('/activities', activitiesRouter);
+const activitiesRouter = require('./activities');
+apiRouter.use('/activities', activitiesRouter);
 
-// const routinesRouter = require('./routines');
-// apiRouter.use('/routines', routinesRouter);
+const routinesRouter = require('./routines');
+apiRouter.use('/routines', routinesRouter);
 
-// const routineActivitiesRouter = require('./routine_activities');
+const routineActivitiesRouter = require('./routine_activities');
 
-// apiRouter.use('/routine_activities', routineActivitiesRouter);
+apiRouter.use('/routine_activities', routineActivitiesRouter);
 
 
 /*------------------------------------------------------------------------------- Exports -------------------------------------------------------------------------------*/
