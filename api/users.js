@@ -27,7 +27,7 @@ usersRouter.use( (req, res, next) => {
 
 //Creates and retunrns new user object
 usersRouter.post('/register', async (res, req, next) => {
-    console.log("req is ", req);
+    
     console.log("req.body is ", req.body);
     const { firstname, lastname, email, username, password } = req.body;
 

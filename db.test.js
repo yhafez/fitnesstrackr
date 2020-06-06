@@ -47,7 +47,7 @@ describe('Create user test', () => {
     
     test('Expect successful POST request to /register to return a user object', async () => {
         
-        const userObj = await fetch('https://localhost:3000/register', POST,
+        const userObj = await axios.post('https://localhost:3000/register',
         {
             method: 'POST',
             body: {

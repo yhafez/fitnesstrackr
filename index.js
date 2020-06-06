@@ -17,6 +17,10 @@ const { PORT = 3000 } = process.env;
 const express = require('express');
 const server = express();
 
+//Require body-parser and bind to server to parse requests into usable json objects
+const bodyParser = require('body-parser');
+server.use(bodyParser.json());
+
 //Set up a router for all api requests
 const apiRouter = require('./api');
 
@@ -25,9 +29,6 @@ server.listen(PORT, () => {
     console.log(`The server is up on port ${PORT}. Listening...`);
 });
 
-//Require body-parser and bind to server to parse requests into usable json objects
-const bodyParser = require('body-parser');
-server.use(bodyParser.json());
 
 //Logging middleware
 const morgan = require('morgan');
