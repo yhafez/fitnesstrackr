@@ -24,11 +24,6 @@ server.use(bodyParser.json());
 //Set up a router for all api requests
 const apiRouter = require('./api');
 
-//When script is run, server will listen to PORT
-server.listen(PORT, () => {
-    console.log(`The server is up on port ${PORT}. Listening...`);
-});
-
 
 //Logging middleware
 const morgan = require('morgan');
@@ -46,3 +41,8 @@ server.use((req, res, next) => {
 
 //Route requests to /api to be processed by router
 server.use('/api', apiRouter);
+
+//When script is run, server will listen to PORT
+server.listen(PORT, () => {
+    console.log(`The server is up on port ${PORT}. Listening...`);
+});
