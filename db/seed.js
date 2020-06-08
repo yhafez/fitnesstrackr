@@ -346,8 +346,8 @@ async function createInitialRoutines() {
         console.log('Creating initial routines...');
 
         const bBoyFootwork = await createRoutine({
-            "creatorId": joe.id,
-            public: true,
+            "creatorId": eva.id,
+            "isPublic": true,
             name: "B-Boy Footwork",
             description: "This routine focuses on the fundamentals of footwork that forms one of the foundations of breakdancing."
 
@@ -361,7 +361,7 @@ async function createInitialRoutines() {
 
         const bBoyPowerMoves = await createRoutine({
             "creatorId": duo.id,
-            public: true,
+            "isPublic": true,
             name: "B-Boy Power Moves",
             description: "This routine focuses on power moves, the flashy side of breakdancing"
         })
@@ -426,3 +426,9 @@ rebuildDb()
     // .then(testDB)
     .catch(console.error)
     .finally(() => client.end());
+
+
+module.exports = {
+    rebuildDb,
+    dropTables
+}

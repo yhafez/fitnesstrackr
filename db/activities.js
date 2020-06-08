@@ -36,6 +36,7 @@ async function createActivity( fields = {} ) {
             const { rows: activity } = await client.query(`
                 INSERT INTO activities("creatorId", name, description, "videoUrl")
                 VALUES ($1, $2, $3, $4)
+                ON CONFLICT DO NOTHING
                 RETURNING *;
             `, [creatorId, name, description, videoUrl]);
 
@@ -46,14 +47,15 @@ async function createActivity( fields = {} ) {
             const { rows: activity } = await client.query(`
                 INSERT INTO activities ("creatorId", name, description)
                 VALUES ($1, $2, $3)
+                ON CONFLICT DO NOTHING
                 RETURNING *;
             `, [creatorId, name, description]);
-            
 
             return activity;
         }
     }
     catch(err){
+
         console.error('Error creating activity. Error: ', err);
         throw err;
     }
@@ -121,7 +123,7 @@ async function getActivitiesById(activityId){
  
     try{
         
-        const { rows: activitiesObj } = await client.query(`
+        const { rows: [activitiesObj] } = await client.query(`
             SELECT *
             FROM activities
             WHERE id=${activityId};

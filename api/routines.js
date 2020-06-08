@@ -9,7 +9,7 @@ const express = require('express');
 const routinesRouter = express.Router();
 
 const { requireUser, requireActiveUser } = require('./utils.js');
-const { getAllRoutines, createRoutine, getRoutineById, updateRoutine, destroyRoutine, addActivityToRoutine } = require('../db');
+const { getAllRoutines, createRoutine, getRoutineById, updateRoutine, destroyRoutine, addActivityToRoutine, getRoutineByName } = require('../db');
 
 
 /*------------------------------------------------------------------------------- End Points -------------------------------------------------------------------------------*/
@@ -55,6 +55,8 @@ routinesRouter.post('/', requireUser, requireActiveUser, async (req, res, next) 
 
     const creatorId = req.user.id;
     const { isPublic, name, description } = req.body;
+    
+    console.log('req.body is ', req.body);
 
     //If no name or description is provided, notify user and return early
     if(!name || !description) {
@@ -66,6 +68,14 @@ routinesRouter.post('/', requireUser, requireActiveUser, async (req, res, next) 
 
     try {
         
+        const routineExists = await getRoutineByName(name);
+        if(routineExists){
+            next({
+                name: "RoutineAlreadyExists",
+                message: "A routine by this name already exists. Please refer to that routine or use a different name."
+            })
+        }
+
         const routineObj = await createRoutine({ creatorId, isPublic, name, description });
 
         if(routineObj) {
@@ -77,7 +87,7 @@ routinesRouter.post('/', requireUser, requireActiveUser, async (req, res, next) 
         else {
             next({
                 name: "RoutineCreationError",
-                message: "There was a problem attempting to create the new routine."
+                message: "There was a problem attempting to create the new routine. There may be another routine with that name."
             });
         }
     }
@@ -256,7 +266,7 @@ routinesRouter.post('/:routineId/activities', requireUser, requireActiveUser, as
         else{
             next({
                 name: "RoutineActivitiesAdditionError",
-                message: "There was an error attempting to add the specified activity to the specified routine."
+                message: "There was an error attempting to add the specified activity to the specified routine. The specified activity may already exist in the routine."
             });
         }
 
@@ -268,34 +278,6 @@ routinesRouter.post('/:routineId/activities', requireUser, requireActiveUser, as
     }
 
 });
-
-
-/*------------------------------------------------------------------------- End Points - Stretch Goals ---------------------------------------------------------------------*/
-
-
-//Get a list of all public activities
-routinesRouter.get('/all_public', (req, res, next) => {
-
-});
-
-
-//Get a list of all routines logged in user has created
-routinesRouter.get('/all', requireUser, requireActiveUser, (req, res, next) => {
-
-});
-
-
-//Get a list of public routines logged in user has created
-routinesRouter.get('/public', requireUser, requireActiveUser, (req, res, next) => {
-
-});
-
-
-//getByEmail
-
-//getByUsername
-
-/*------------------------------------------------------------------------------- Exports -------------------------------------------------------------------------------*/
 
 
 module.exports = routinesRouter

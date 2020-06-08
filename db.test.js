@@ -27,161 +27,84 @@ const {
     addActivityToRoutine,
     updateRoutineActivity,
     destroyRoutineActivity,
-    getAllRoutineActivitiesById
+    getAllRoutineActivitiesById,
 } = require('./db');
 
 const faker = require('faker');
-
-
 const axios = require('axios');
 
 
-describe('Validation tests', () => {
+//Require client and create a new client using the local DATABASE_URL environmental label (for Heroku) or port 5432 locally to enable managing DB
+const { Client } = require('pg');
+const client = new Client('postgress://localhost:5432/fitnesstrackr');
+
+beforeAll(() =>{
+    client.connect();
+    
+});
+
+afterAll(() => {
+    client.end();
+});
+
+describe.skip('Validation tests', () => {
     test('Expect equality to return true', () => {
         expect(true).toBe(true);
     });
 });
 
 
-describe('Create user test', () => {
-    
-    test('Expect successful POST request to /register to return a user object', async () => {
-        
-        const userObj = await axios.post('https://localhost:3000/register',
-        {
-            method: 'POST',
-            body: {
-                firstname: faker.name.firstName(),
-                lastname: faker.name.lastName(),
-                email: faker.internet.email(),
-                username: faker.internet.userName(),
-                password: faker.internet.password()
-            }
-        });
+/*------------------------------------------------------------------------------ Users endpoint ----------------------------------------------------------------------------*/
 
-        console.log(userObj);
-        
-        expect(userObj.keys).toBe(['firstname', 'lastname', 'email', 'username', 'password']);
-            
-        expect(typeof userObj.firstname).toBe('string'); //firstname
-        expect(typeof userObj.lastname).toBe('string'); //lastname
-        expect(typeof userObj.email).toBe('string'); //email
-        expect(typeof userObj.username).toBe('string'); //username
-        exect(typeof userObj.password).toBe('string'); //password
+
+// /register
+describe.skip('/users/register endpoint - create a new user object', () => {
     
-        
+    let dat, err;
+    const fields = {
+        firstname: faker.name.firstName(),
+        lastname: faker.name.lastName(),
+        email: faker.internet.email(),
+        username: faker.internet.userName(),
+        password: faker.internet.password()
+    }
+
+    //Run once before all tests
+    beforeAll(async () => {
+        response  = await axios.post('http://localhost:3000/api/users/register', fields);
+        data = response.data;
+    });
+
+
+    //On success
+    it('returns a user object attached as "data" on success', async () => {expect(typeof data).toBe("object")}),
+    test('the object has keys "message" and "token" on success', () => {expect(Object.keys(data)).toEqual(expect.arrayContaining(['message', 'token']))}),
+    test('the values of thise keys are of the type "string"', () => {
+        expect(typeof data.message).toBe('string');
+        expect(typeof data.token).toBe('string');
+    }),
+    
+    //On failure - duplicate user creation attempt
+    it('returns an error message in "data" for duplicate user creation attempt', async () => {
+        //Run POST call again with same data
+        const { data: temp }  = await axios.post('http://localhost:3000/api/users/register', fields);
+        err = temp;
+        expect(typeof err).toBe("object");
+    }), 
+    test('the object has keys "name" and "message"', () => {expect(Object.keys(err)).toEqual(expect.arrayContaining(['name', 'message']))}),
+    test('the value of "name" is "UserExistsError" and the value of "message" is "A user by that username already exists. Please try another username"', () => {
+        expect(err.name).toBe('UserExistsError');
+        expect(err.message).toBe("A user by that username already exists. Please try another username");
     })
+    
+    it('returns an error message in "data" for all other errors', async () => {
+        //Run POST call again with same data
+        const { data: temp1 }  = await axios.post('http://localhost:3000/api/users/register', {firstname: null, lastname: null, email: null, username: null, password: null});
+        expect(typeof temp1).toBe("object");
+    })
+
 })
 
 
-//Attempt 1 - works, but if I make it async, doesn't work. Successfully determines that I'm receiving an object, which is really just a promise object.
 
-// describe('getAllUsers()', () => {
-//     test('Returns array of user objects', async () => {
-//         // jest.setTimeout(20000);
-//         console.log(getAllUsers);
-//         const users = await getAllUsers();
-//         console.log(users);
-
-//         expect(true).toBe(true);
-//         // expect(typeof users).toBe('object');
-//         // expect(Array.isArray(users)).toBe(true);
-//     });
-// });
-
-
-
-
-//Attempt 2 - Doesn't work at all.
-
-// describe('getAllUsers()', () => {
-
-
-//     test('Returns array of user objects', async () => {
-
-
-//         const expectedObj = {
-//             id: expect.any(Number),
-//             firstname: expect.any(String),
-//             lasstname: expect.any(String),
-//             email: expect.any(String),
-//             username: expect.any(String),
-//             active: expect.any(Boolean)
-//         }
-//         const expectedArr = [except.objectContaining(expectedObj)]
-//         console.log(expectedObj);
-
-//         expect(getAllUsers()).toEqual(expect.arrayContaining(expectedArr));
-//     })
-// });
-
-//         const expectedObj = {
-//             id: expect.any(Number),
-//             firstname: expect.any(String),
-//             lasstname: expect.any(String),
-//             email: expect.any(String),
-//             username: expect.any(String),
-//             active: expect.any(Boolean)
-//         }
-//         const expectedArr = [except.objectContaining(expectedObj)]
-//         console.log(expectedObj);
-
-//         expect(getAllUsers()).toEqual(expect.arrayContaining(expectedArr));
-//     })
-// });
-
-//         const expectedObj = {
-//             id: expect.any(Number),
-//             firstname: expect.any(String),
-//             lasstname: expect.any(String),
-//             email: expect.any(String),
-//             username: expect.any(String),
-//             active: expect.any(Boolean)
-//         }
-//         const expectedArr = [except.objectContaining(expectedObj)]
-//         console.log(expectedObj);
-
-//         expect(getAllUsers()).toEqual(expect.arrayContaining(expectedArr));
-//     })
-// });
-
-
-
-//Attempt 3 - Doesn't work at await getAllUsers
-
-// describe('getAllUsers()', () => {
-//     test('Returns array of user objects', async () => {
-        
-//         console.log('here1');
-//         console.log( await getAllUsers());
-//         console.log('here2');
-
-//         expect(Array.isArray(await getAllUsers())).toBe(true);
-
-//         (await getAllUsers()).forEach((userObj) => {
-                
-//             console.log(userObj);
-//             console.log(userObj.keys);
-//             console.log(userObj.values);
-
-//             expect(typeof userObj).toBe('object');
-
-
-//             expect(userObj.keys).toBe(['id', 'firstname', 'lastname', 'email', 'username', 'active']);
-
-//             expect(typeof userObj.values[0]).toBe('number'); //id
-//             expect(typeof userObj.values[1]).toBe('string'); //firstname
-//             expect(typeof userObj.values[2]).toBe('string'); //lastname
-//             expect(typeof userObj.values[3]).toBe('string'); //email
-//             expect(typeof userObj.values[4]).toBe('string'); //username
-//             expect(typeof userObj.values[5]).toBe('boolean'); //active
-
-//         });
-//     });
-// });
-
-
-
-
-
-
+// /login

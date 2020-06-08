@@ -17,6 +17,9 @@ const { PORT = 3000 } = process.env;
 const express = require('express');
 const server = express();
 
+const cors = require('cors');
+server.use(cors());
+
 //Require body-parser and bind to server to parse requests into usable json objects
 const bodyParser = require('body-parser');
 server.use(bodyParser.json());

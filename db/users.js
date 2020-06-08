@@ -32,14 +32,14 @@ async function createUser({
         
         }
 
-        const{ rows } = await client.query(`
+        const{ rows : [user] } = await client.query(`
             INSERT INTO users(firstname, lastname, email, username, password)
             VALUES ($1, $2, $3, $4, $5)
             ON CONFLICT DO NOTHING
             RETURNING *;
         `, [firstname, lastname,  email, username, password]);
-
-        return rows;
+        
+        return user;
 
     }
     catch(err) {
@@ -62,8 +62,6 @@ async function getUser( { username, hashedPassword } ) {
             WHERE username=$1
             AND password=$2;
         `, [username, hashedPassword]);
-
-        userObj.password='Hidden 😛';
 
         return userObj;
     
@@ -128,7 +126,6 @@ async function updateUser(id, fields = {}) {
             RETURNING *;
         `, Object.values(fields));
         
-        userObj.password='Hidden 😛';
         return userObj;
     }
     catch(err) {
@@ -143,15 +140,11 @@ async function updateUser(id, fields = {}) {
 async function getUserByUsername( username ) {
     
     try{
-        
-        const { rows: userObj } = await client.query(`
+        const { rows: [userObj] } = await client.query(`
             SELECT *
             FROM users
             WHERE username='${username}'
         `);
-
-        username.password='Hidden 😛';
-
         return userObj;
         
     }
@@ -167,13 +160,11 @@ async function getUserByUsername( username ) {
 async function getUserById(userId) {
     try{
         
-        const { rows: userObj } = await client.query(`
+        const { rows: [userObj] } = await client.query(`
             SELECT *
             FROM users
             WHERE id=$1;
         `, [userId]);
-
-        userObj.password='Hidden 😛';
 
         return userObj;
         
@@ -190,13 +181,11 @@ async function getUserByEmail(email) {
     
     try{
         
-        const { rows: userObj } = await client.query(`
+        const { rows: [userObj] } = await client.query(`
             SELECT *
             FROM users
             WHERE email=$1;
         `, [email]);
-
-        userObj.password='Hidden 😛';
 
         return userObj;
         

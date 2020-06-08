@@ -8,7 +8,6 @@
 //Verify if user is logged in; if not, notify user
 function requireUser(req, res, next) {
 
-    console.log('user is active, ', req.user.active);
     if(!req.user) {
         next({
             name: 'MissingUserError',

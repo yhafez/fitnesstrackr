@@ -55,11 +55,14 @@ activitiesRouter.get('/', async (req, res, next) => {
 activitiesRouter.post('/', requireUser, requireActiveUser, async (req, res, next) => {
     
 
+
     const creatorId = req.user.id;
     const { name, description, videoUrl } = req.body;
 
     //Build fields object to pass into createActivity. If optional videoUrl field is not provided, do not include it in the object
     const fields = videoUrl ? { creatorId, name, description, videoUrl } : { creatorId, name, description };
+
+    console.log('field is ', fields);
 
         //If no name or description is provided, notify user and return early
         if(!name || !description) {
@@ -71,7 +74,7 @@ activitiesRouter.post('/', requireUser, requireActiveUser, async (req, res, next
 
     try{
         //If all fields present, attempt to create activity. On succeess, return userObj and notify user, else notify user if unsuccessful.
-        const activityObj = await createActivity(fields);
+        const [activityObj] = await createActivity(fields);
 
         if(activityObj) {
             res.send({
@@ -82,7 +85,7 @@ activitiesRouter.post('/', requireUser, requireActiveUser, async (req, res, next
         else{
             next({
                 name: "ActivityCreationError",
-                message: "There's been an error creating the new activity."
+                message: "There's been an error creating the new activity. This activity may already exist."
             });
         }
 
@@ -102,8 +105,6 @@ activitiesRouter.patch('/:activityId', requireUser, requireActiveUser, async (re
     const targetActivity = req.params.activityId;
     const fields = req.body;
     
-    //TODO - Confirm this works
-    //If no update fields provided, return early and notify user
     if(fields.length === 0){
         next({
             name: "MissingFieldsError",
@@ -115,9 +116,10 @@ activitiesRouter.patch('/:activityId', requireUser, requireActiveUser, async (re
         
         //Attempt to locate activity using id from url
         const activityObj = await getActivitiesById(targetActivity);
+        console.log(activityObj);
 
         //If no such activity is found, notify user and return early
-        if(!activityObj) {
+        if(!activityObj || activityObj.length === 0) {
             next({
                 name: "ActivityNotFound",
                 message: "No activity was found with the specified Id."
@@ -203,35 +205,6 @@ activitiesRouter.get(':activityId/routine', async (req, res, next) => {
     }
 
 });
-
-
-/*------------------------------------------------------------------------- End Points - Stretch Goals ---------------------------------------------------------------------*/
-
-
-//Get a list of all public activities
-activitiesRouter.get('/all_public', async (req, res, next) => {
-
-});
-
-
-//Get a list of all activities logged in user has created
-activitiesRouter.get('/all', requireUser, requireActiveUser, async (req, res, next) => {
-
-});
-
-
-//Get a list of public activities logged in user has created
-activitiesRouter.get('/public', requireUser, requireActiveUser, async (req, res, next) => {
-
-});
-
-
-//getByEmail
-
-//getByUsername
-
-
-/*-------------------------------------------------------------------------------- Exports -------------------------------------------------------------------------------*/
 
 
 module.exports = activitiesRouter

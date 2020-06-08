@@ -19,9 +19,10 @@ async function addActivityToRoutine({ routineId, activityId, count, duration }) 
     
     try{
         
-        const { rows: routineActivitiesObj } = await client.query(`
+        const { rows: [routineActivitiesObj] } = await client.query(`
             INSERT INTO routine_activities("routineId", "activityId", count, duration)
             VALUES ($1, $2, $3, $4)
+            ON CONFLICT DO NOTHING
             RETURNING *;
         `, [routineId, activityId, count, duration]);
 
@@ -50,7 +51,7 @@ async function updateRoutineActivity( id, fields = {} ) {
             return;
         }
 
-        const { rows: routineActivitiesObj } = await client.query(`
+        const { rows: [routineActivitiesObj] } = await client.query(`
             UPDATE routine_activities
             SET ${setString}
             WHERE id=${id}
@@ -74,7 +75,7 @@ async function destroyRoutineActivity(id) {
     
     try{
 
-        const { rows: routineActivitiesObj } = await client.query(`
+        const { rows: [routineActivitiesObj] } = await client.query(`
             DELETE FROM routine_activities
             WHERE id=${id}
             RETURNING *;
@@ -97,12 +98,11 @@ async function destroyRoutineActivity(id) {
 async function getRoutineActivityById(id){
 
     try{
-        
-        const {rows: routineActivityObj } = await client.query(`
+        const {rows: [routineActivityObj] } = await client.query(`
         SELECT *
         FROM routine_activities
-        WHERE id=${id};
-        `)
+        WHERE id=$1;
+        `, [id]);
 
         return routineActivityObj;
 

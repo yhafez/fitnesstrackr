@@ -21,7 +21,7 @@ async function createRoutine( fields = {} ) {
     try{
         if(isPublic) {
             
-            const { rows: routine } = await client.query(`
+            const { rows: [routine] } = await client.query(`
                 INSERT INTO routines("creatorId", "isPublic", name, description)
                 VALUES (${creatorId}, ${isPublic}, '${name}', '${description}')
                 RETURNING *;
@@ -30,7 +30,7 @@ async function createRoutine( fields = {} ) {
             return routine;
         }
         else{
-            const { rows: routine } = await client.query(`
+            const { rows: [routine] } = await client.query(`
             INSERT INTO routines("creatorId", name, description)
             VALUES (${creatorId}, '${name}', '${description}')
             RETURNING *;
@@ -60,7 +60,7 @@ async function updateRoutine( id, fields = {} ) {
             return;
         }
 
-        const { rows: routine } = await client.query(`
+        const { rows: [routine] } = await client.query(`
             UPDATE routines
             SET ${setString}
             WHERE id=${id}
@@ -88,7 +88,7 @@ async function destroyRoutine(id) {
             WHERE "routineId"=${id};
         `);
         
-        const { rows: routine } = await client.query(`
+        const { rows: [routine] } = await client.query(`
         DELETE FROM routines
         WHERE id=${id}
         RETURNING *;
@@ -130,7 +130,7 @@ async function getPublicRoutines() {
         const { rows: routinesArr } = await client.query(`
             SELECT *
             FROM routines
-            WHERE public=true;
+            WHERE "isPublic"=true;
         `)
 
         return routinesArr;
@@ -148,7 +148,7 @@ async function getPublicRoutines() {
 async function getAllRoutinesByUser(username) {
     
     try{
-
+    
         const [{ id }] = await getUserByUsername(username);
 
         const { rows: routinesArr } = await client.query(`
@@ -173,14 +173,14 @@ async function getPublicRoutinesByUser(username) {
 
     try{
 
-        const [{ id }] = await getUserByUsername(username);
+        const { id } = await getUserByUsername(username);
 
         const { rows: routinesArr } = await client.query(`
             SELECT *
             FROM routines
-            WHERE public=true
+            WHERE "isPublic"=true
             AND "creatorId"=${id};
-        `)
+        `);
 
         return routinesArr;
         
@@ -207,9 +207,9 @@ async function getPublicRoutinesByActivity(activityId) {
         //Convert routine ID's into routines in the form of a promise object
         const routinesPromiseArr = routinesIdArr.map(async (idObj) => {
             
-            const [routine] = await getRoutineById(idObj.routineId);
+            const routine = await getRoutineById(idObj.routineId);
             
-            if(routine.public){
+            if(routine.isPublic){
                 return routine;
             }
         
@@ -239,7 +239,7 @@ async function getRoutineById(routineId) {
     
     try{
 
-        const { rows: routineObj } = await client.query(`
+        const { rows: [routineObj] } = await client.query(`
             SELECT *
             FROM routines
             WHERE id=${routineId};
@@ -250,6 +250,30 @@ async function getRoutineById(routineId) {
     }
     catch(err) {
         console.error('Error getting routines by Id. Error: ', err);
+        throw err;
+    }
+
+}
+
+
+//Return the routine object with the specified name
+async function getRoutineByName(routineName) {
+
+    console.log('routineName is ', routineName);
+    
+    try{
+
+        const { rows: [routineObj] } = await client.query(`
+            SELECT *
+            FROM routines
+            WHERE name=$1;
+        `, [routineName]);
+
+        return routineObj;
+        
+    }
+    catch(err) {
+        console.error('Error getting routines by name. Error: ', err);
         throw err;
     }
 
@@ -290,7 +314,7 @@ async function getPublicRoutinesByEmail(email) {
         const { rows: routinesArr } = await client.query(`
             SELECT *
             FROM routines
-            WHERE public=true AND "creatorId"=${id};
+            WHERE "isPublic"=true AND "creatorId"=${id};
         `)
 
         return routinesArr;
@@ -345,6 +369,7 @@ module.exports = {
     getPublicRoutinesByUser,
     getPublicRoutinesByActivity,
     getRoutineById,
+    getRoutineByName,
     getAllRoutinesByEmail,
     getPublicRoutinesByEmail,
     getAllRoutinesByActivity

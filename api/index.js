@@ -17,6 +17,7 @@ const { JWT_SECRET } = process.env;
 
 //Import getUserById from ../db/users.js (through index.js)
 const { getUserById } = require('../db');
+const { requireUser, requireActiveUser } = require('./utils.js');
 
 
 /*------------------------------------------------------------------------------- Middleware -------------------------------------------------------------------------------*/
@@ -52,6 +53,14 @@ apiRouter.use(async (req, res, next) => {
             //If able to verify token with JWT, set req.user and log in server terminal; else notify user
             if(id) {
                 req.user = await getUserById(id);
+
+                //If token returns undefined, notify user that token either does not exist or is invalid
+                if(req.user === undefined) {
+                    next({
+                        name: "JsonWebTokenError",
+                        message: "Error validating token. Token provided is either invalid or expired."
+                    });
+                }
                 console.log('User is set: ', req.user);
                 next();
             }
@@ -63,9 +72,18 @@ apiRouter.use(async (req, res, next) => {
             }
         }
         catch(err) {
-            console.error('Error setting req.user. Error: ', err);
-            const { name, message } = err;
-            next({ name, message })
+            if(err.name === "JsonWebTokenError"){
+                console.error('Error validating token. Token provided is either invalid or expired.');
+                next({
+                    name: "JsonWebTokenError",
+                    message: "Error validating token. Token provided is either invalid or expired."
+                });
+            }
+            else{
+                console.error('Error setting req.user. Error: ', err);
+                const { name, message } = err;
+                next({ name, message })
+            }
         }
     }
     //If header is incorrectly formatted, notify user
@@ -93,8 +111,12 @@ const routinesRouter = require('./routines');
 apiRouter.use('/routines', routinesRouter);
 
 const routineActivitiesRouter = require('./routine_activities');
-
 apiRouter.use('/routine_activities', routineActivitiesRouter);
+
+apiRouter.use((error, req, res, next) => {
+    //Return caught errors to user
+    res.send(error);
+})
 
 
 /*------------------------------------------------------------------------------- Exports -------------------------------------------------------------------------------*/

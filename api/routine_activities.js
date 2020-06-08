@@ -24,14 +24,13 @@ routineActivitiesRouter.use((req, res, next) => {
 
 
 //Update count or duration of a routine activity logged in user has created it
-routineActivitiesRouter.patch(':rotuineActivityId', requireUser, requireActiveUser, async (req, res, next) => {
+routineActivitiesRouter.patch('/:rotuineActivityId', requireUser, requireActiveUser, async (req, res, next) => {
     
     const userId = req.user.id;
-    const targetRoutineActivity = req.params.routineActivityId;
+    const targetRoutineActivity = req.params.rotuineActivityId;
     const fields = req.body;
 
     try{
-
         //Attempt to locate routine activity using id from Url
         const routineActivityObj = await getRoutineActivityById(targetRoutineActivity);
         
@@ -44,6 +43,7 @@ routineActivitiesRouter.patch(':rotuineActivityId', requireUser, requireActiveUs
         }
         
         const routineObj = await getRoutineById(routineActivityObj.routineId);
+        console.log('routineObj is ', routineObj)
 
         //If user attempting to add activity to routine is not the user who created the routine, send error message
         const routineCreator = routineObj.creatorId;
@@ -54,7 +54,7 @@ routineActivitiesRouter.patch(':rotuineActivityId', requireUser, requireActiveUs
             });
         }
 
-
+        
         const routineActivitiesObj = await updateRoutineActivity(targetRoutineActivity, fields);
 
         //If activity is successfully added to routine, notify user and return routineActivities object, else notify user of failure
@@ -81,10 +81,10 @@ routineActivitiesRouter.patch(':rotuineActivityId', requireUser, requireActiveUs
 
 
 //Hard delete a routine activity logged in user has created it
-routineActivitiesRouter.delete(':rotuineActivityId', requireUser, requireActiveUser, async (req, res, next) => {
+routineActivitiesRouter.delete('/:rotuineActivityId', requireUser, requireActiveUser, async (req, res, next) => {
     
     const userId = req.user.id;
-    const targetRoutineActivity = req.params.routineActivityId;
+    const targetRoutineActivity = req.params.rotuineActivityId;
 
     try{
 
@@ -134,10 +134,6 @@ routineActivitiesRouter.delete(':rotuineActivityId', requireUser, requireActiveU
     }
 
 });
-
-
-/*------------------------------------------------------------------------- End Points - Stretch Goals ---------------------------------------------------------------------*/
-
 
 
 
