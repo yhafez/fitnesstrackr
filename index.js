@@ -3,7 +3,7 @@
 //Server
 
 
-/*------------------------------------------------------------------------Required packages and Middle-Ware------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------Required packages and Middleware ------------------------------------------------------------------------*/
 
 //Require and configure dotenv, allowing use of .env file
 require('dotenv').config();
@@ -19,8 +19,8 @@ const { PORT = 3000 } = process.env;
 const express = require('express');
 const server = express();
 
-const cors = require('cors');
-server.use(cors());
+// const cors = require('cors');
+// server.use(cors());
 
 //Require body-parser and bind to server to parse requests into usable json objects
 const bodyParser = require('body-parser');
