@@ -4,9 +4,6 @@
 
 /*---------------------------------------------------------------------------- Required packages ----------------------------------------------------------------------------*/
 
-//Require and configure dotenv, allowing use of .env file
-require('dotenv').config();
-
 //Require express and set up another router to route to /users, /activities, /routines, and /routine_activities
 const express = require('express');
 const apiRouter = express.Router();

@@ -5,6 +5,8 @@
 
 /*------------------------------------------------------------------------Required packages and Middle-Ware------------------------------------------------------------------------*/
 
+//Require and configure dotenv, allowing use of .env file
+require('dotenv').config();
 
 //Import client from database and connect to client
 const { client } = require ('./db');
