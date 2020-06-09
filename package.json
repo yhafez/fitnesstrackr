@@ -15,6 +15,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.19.2",
+    "cors": "^2.8.5",
     "bcrypt": "^4.0.1",
     "body-parser": "^1.19.0",
     "chalk": "^4.0.0",
@@ -25,7 +26,6 @@
     "pg": "^8.2.1"
   },
   "devDependencies": {
-    "cors": "^2.8.5",
     "faker": "^4.1.0",
     "jest": "^26.0.1",
     "nodedev": "0.0.1",
