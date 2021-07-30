@@ -28,7 +28,7 @@ jobs:
       - name: echo secret
         run: echo ${{secret.TEST_SECRET}}
         env:
-          TEST_SECURE: ${{secret.TEST_SECRET}}
+          TEST_SECURE: ${{secrets.TEST_SECRET}}
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
